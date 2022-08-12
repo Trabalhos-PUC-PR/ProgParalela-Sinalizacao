@@ -10,14 +10,26 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		Semaphore gate = new Semaphore(1);
-		Generator gen = new Generator(gate);
-		Padronizer pad = new Padronizer(gate, gen);
-		Counter counter = new Counter(gate, pad);
+		Semaphore gateGenerator = new Semaphore(1);
+		Semaphore gatePadronizer = new Semaphore(0);
+		Semaphore gateCounter = new Semaphore(0);
+		Generator gen = new Generator(gateGenerator, gatePadronizer);
+		Padronizer pad = new Padronizer(gatePadronizer, gateCounter, gen);
+		Counter counter = new Counter(gateCounter, gateGenerator, pad);
 		
-		gen.generateText();
-		pad.toUpperCase();
-		counter.getTotalVowels();
+		gen.start();
+		pad.start();
+		counter.start();
+	
+		try {
+			gen.join();
+			pad.join();
+			counter.join();
+		}catch(Exception e) {
+			
+		}
+		counter.printVowels();
+	
 	}
 
 }

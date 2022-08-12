@@ -7,9 +7,11 @@ public class Generator extends Thread {
 
 	private String text;
 	private Semaphore gate;
+	private Semaphore gatePadronizer;
 
-	public Generator(Semaphore gate) {
+	public Generator(Semaphore gate, Semaphore gatePadronizer) {
 		this.gate = gate;
+		this.gatePadronizer = gatePadronizer;
 		this.text = "";
 	}
 
@@ -33,7 +35,7 @@ public class Generator extends Thread {
 		try {
 			gate.acquire();
 			generateText();
-			gate.release();
+			gatePadronizer.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
